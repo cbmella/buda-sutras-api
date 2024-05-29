@@ -1,0 +1,611 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger with Lumen",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/pets": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "List all pets",
+                "description": "Retrieve a list of all pets available in the database.",
+                "responses": {
+                    "200": {
+                        "description": "A list of pets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pet"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Create a new pet",
+                "description": "Add a new pet to the database.",
+                "requestBody": {
+                    "description": "Pet data including user_id, name, description, location, photo_url, status, and optional fields such as breed_id, age, personality, and adoption requirements.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "name",
+                                    "description",
+                                    "location",
+                                    "photo_url",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The ID of the user",
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "description": "Name of the pet",
+                                        "type": "string",
+                                        "example": "cachupin"
+                                    },
+                                    "description": {
+                                        "description": "Description of the pet",
+                                        "type": "string",
+                                        "example": "affectionate dog"
+                                    },
+                                    "location": {
+                                        "description": "Current location of the pet",
+                                        "type": "string",
+                                        "example": "Machali"
+                                    },
+                                    "photo_url": {
+                                        "description": "URL of the pet's photo",
+                                        "type": "string",
+                                        "format": "uri",
+                                        "example": "https://example.com/path/to/photo.jpg"
+                                    },
+                                    "status": {
+                                        "description": "Status of the pet",
+                                        "type": "string",
+                                        "enum": [
+                                            "lost",
+                                            "adoption"
+                                        ]
+                                    },
+                                    "breed_id": {
+                                        "description": "ID of the breed, if applicable",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "age": {
+                                        "description": "Age of the pet, if known",
+                                        "type": "integer",
+                                        "example": 5,
+                                        "nullable": true
+                                    },
+                                    "personality": {
+                                        "description": "Personality traits of the pet, if known",
+                                        "type": "string",
+                                        "example": "Friendly, calm",
+                                        "nullable": true
+                                    },
+                                    "adoption_requirements": {
+                                        "description": "Requirements for adopting the pet, if any",
+                                        "type": "string",
+                                        "example": "Must have a fenced yard",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pet created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "description": "Details of the validation errors",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pets/{id}": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Retrieve a specific pet",
+                "description": "Retrieve details about a specific pet by ID, with optional expansion to include related breed details.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Pet ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "expand",
+                        "in": "query",
+                        "description": "Expand related entities, e.g., 'breed'",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detailed information about a pet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Update a specific pet",
+                "description": "Update details for a specific pet by ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Pet ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pet data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Pet"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pet updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pet"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data"
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Delete a specific pet",
+                "description": "Deletes a specific pet by ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Pet ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Pet deleted successfully"
+                    },
+                    "404": {
+                        "description": "Pet not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/pets/latest": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Retrieve latest pets",
+                "description": "Fetches a list of the most recently added pets in the database.",
+                "responses": {
+                    "200": {
+                        "description": "An array of pets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pet"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pets/search": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "Search pets by specific criteria",
+                "description": "Search for pets based on specific attributes like name, location, status, breed, and other characteristics.",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "The name of the pet",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Location of the pet",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the pet (e.g., lost, adoption)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "breed_id",
+                        "in": "query",
+                        "description": "ID of the breed",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "age",
+                        "in": "query",
+                        "description": "Age of the pet",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "personality",
+                        "in": "query",
+                        "description": "Personality traits of the pet",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "adoption_requirements",
+                        "in": "query",
+                        "description": "Adoption requirements",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of matching pets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pet"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pets/search-general": {
+            "get": {
+                "tags": [
+                    "Pets"
+                ],
+                "summary": "General search for pets",
+                "description": "Performs a general search across multiple pet attributes using a single search term.",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "The search term to be used across multiple pet attributes",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of pets that match the search term",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pet"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/breeds": {
+            "get": {
+                "tags": [
+                    "Breeds"
+                ],
+                "summary": "List all breeds",
+                "description": "Retrieve a list of all breeds available in the database.",
+                "responses": {
+                    "200": {
+                        "description": "A list of breeds",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Breed"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Breeds"
+                ],
+                "summary": "Create a new breed",
+                "description": "Add a new breed to the database.",
+                "requestBody": {
+                    "description": "Breed data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Breed"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Breed created successfully"
+                    },
+                    "400": {
+                        "description": "Invalid input data"
+                    }
+                }
+            }
+        },
+        "/api/v1/breeds/{id}": {
+            "get": {
+                "tags": [
+                    "Breeds"
+                ],
+                "summary": "Retrieve a specific breed",
+                "description": "Retrieve details about a specific breed by ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Breed ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detailed information about a breed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Breed"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Breed not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Breeds"
+                ],
+                "summary": "Update a specific breed",
+                "description": "Update details for a specific breed by ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Breed ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Breed data to update",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Breed"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Breed updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Breed"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data"
+                    },
+                    "404": {
+                        "description": "Breed not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Breeds"
+                ],
+                "summary": "Delete a specific breed",
+                "description": "Deletes a specific breed by ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Breed ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Breed deleted successfully"
+                    },
+                    "404": {
+                        "description": "Breed not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Breed": {
+                "title": "Breed",
+                "description": "Represents an animal breed in the system, providing details about the breed characteristics.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Breed",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the Breed",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Detailed description of the Breed",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Pet": {
+                "title": "Pet",
+                "description": "Represents a pet in the system, including details like name, type, and age.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the Pet",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "description": "Name of the Pet",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of Pet (e.g., Cat, Dog)",
+                        "type": "string"
+                    },
+                    "age": {
+                        "description": "Age of the Pet in years",
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
