@@ -22,4 +22,5 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         return response()->json(['message' => 'Sutras API', 'status' => 'Connected']);
     });
     $router->get('sutras', 'SutraController@index');
+    $router->get('sutra-del-dia', 'SutraController@sutraDelDia');
 });

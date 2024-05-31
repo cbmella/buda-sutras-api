@@ -17,4 +17,9 @@ class SutraService
     {
         return $this->sutraRepository->all();
     }
+
+    public function getSutraDelDia(array $sutrasVistos)
+    {
+        return $this->sutraRepository->sutraDelDia($sutrasVistos);
+    }
 }
