@@ -7,8 +7,6 @@ use App\Repositories\Contracts\SutraRepositoryInterface;
 
 class SutraRepository implements SutraRepositoryInterface
 {
-    // protected $totalSutras = 53;
-
     public function all()
     {
         return Sutra::all();
